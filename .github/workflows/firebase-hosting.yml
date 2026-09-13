@@ -1,0 +1,40 @@
+name: Publicar Smyle Lab no Firebase
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar arquivos do GitHub
+        uses: actions/checkout@v4
+
+      - name: Preparar Smyle Lab
+        shell: bash
+        run: |
+          if [ -f "Smyle_Lab_Firebase_smyle-lab.zip" ]; then
+            rm -rf public
+            unzip -o "Smyle_Lab_Firebase_smyle-lab.zip"
+          fi
+
+          if [ ! -f "public/index.html" ]; then
+            echo "ERRO: public/index.html não foi encontrado."
+            echo "Envie o arquivo Smyle_Lab_Firebase_smyle-lab.zip para a raiz do repositório."
+            exit 1
+          fi
+
+      - name: Publicar no Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SMYLE_LAB }}
+          channelId: live
+          projectId: smyle-lab
