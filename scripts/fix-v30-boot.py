@@ -29,7 +29,7 @@ text = text.replace(
     1,
 )
 
-# ==== V31: código do jogador em sequência ====
+# ==== V31: código do jogador sequencial ====
 old = '''function generateSmylePlayerCodeV19(){
   const used = new Set();
   try{
