@@ -55,7 +55,6 @@ jobs:
           python3 scripts/patch-v56-compact-game-flow.py
           python3 scripts/patch-v36-script-integrity.py
           python3 scripts/patch-v57-restore-game-flow.py
-          python3 scripts/patch-v58-auto-advance.py
 
       - name: Publicar no Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
