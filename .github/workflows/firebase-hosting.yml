@@ -43,6 +43,7 @@ jobs:
           python3 scripts/patch-v37-content-modal-success.py
           python3 scripts/patch-v38-modal-balance.py
           python3 scripts/patch-v39-user-management.py
+          python3 scripts/patch-v40-access-profiles.py
           python3 scripts/patch-v36-script-integrity.py
 
       - name: Publicar no Firebase Hosting
