@@ -18,34 +18,42 @@ if end < 0:
 
 segment = html[start:end]
 
-# Alguns patches antigos usavam o primeiro </body> do arquivo. Como existe um
-# </body> dentro do HTML do relatório de impressão, esses scripts acabavam
-# presos dentro da template string e podiam encerrar o JavaScript principal.
-# Recupera TODOS os scripts Smyle que tenham caído dentro dessa template.
+# Patches antigos usaram o primeiro </body> ou </head> do arquivo. Como o
+# relatório de impressão também possui essas tags dentro de uma template string,
+# alguns <script> e <style> do Smyle ficaram presos ali. Recuperamos todos.
 script_re = re.compile(
     r'<script\b(?=[^>]*\bid=["\'](?P<id>smyle-[^"\']+)["\'])[^>]*>.*?<\\?/script>',
+    re.IGNORECASE | re.DOTALL,
+)
+style_re = re.compile(
+    r'<style\b(?=[^>]*\bid=["\'](?P<id>smyle-[^"\']+)["\'])[^>]*>.*?</style>',
     re.IGNORECASE | re.DOTALL,
 )
 
 recovered = []
 recovered_ids = []
 
-for match in list(script_re.finditer(segment)):
-    block = match.group(0).replace('<\\/script>', '</script>')
-    recovered.append(block)
-    recovered_ids.append(match.group('id'))
-
-if recovered:
-    segment = script_re.sub('', segment)
+for regex, kind in ((script_re, 'script'), (style_re, 'style')):
+    matches = list(regex.finditer(segment))
+    for match in matches:
+        block = match.group(0)
+        if kind == 'script':
+            block = block.replace('<\\/script>', '</script>')
+        recovered.append(block)
+        recovered_ids.append(match.group('id'))
+    if matches:
+        segment = regex.sub('', segment)
 
 # Qualquer </script> legítimo pertencente ao HTML de impressão precisa ficar
-# escapado para não encerrar o <script> principal no parser do navegador.
+# escapado para não encerrar o script principal no parser do navegador.
 segment = segment.replace('</script>', '<\\/script>')
 html = html[:start] + segment + html[end:]
 
-# Recoloca os scripts recuperados no BODY REAL, sempre o último </body>.
-for script_id, block in zip(recovered_ids, recovered):
-    if f'id="{script_id}"' in html or f"id='{script_id}'" in html:
+# Recoloca tudo no documento REAL, imediatamente antes do último </body>.
+# <style> dentro do body continua sendo aplicado pelo navegador e evita cairmos
+# novamente no </head> existente dentro da template do relatório.
+for element_id, block in zip(recovered_ids, recovered):
+    if f'id="{element_id}"' in html or f"id='{element_id}'" in html:
         continue
     body_pos = html.rfind('</body>')
     if body_pos < 0:
@@ -62,7 +70,7 @@ if '</script>' in segment:
 
 trapped = re.findall(r'id=["\'](smyle-[^"\']+)["\']', segment, flags=re.IGNORECASE)
 if trapped:
-    raise RuntimeError('FALHA DE INTEGRIDADE: scripts Smyle ainda presos no relatório: ' + ', '.join(trapped))
+    raise RuntimeError('FALHA DE INTEGRIDADE: elementos Smyle ainda presos no relatório: ' + ', '.join(trapped))
 
 required = [
     'function renderReports()',
@@ -75,12 +83,12 @@ for marker in required:
     if marker not in html:
         raise RuntimeError(f'FALHA DE INTEGRIDADE: marcador essencial ausente: {marker}')
 
-# Os reparos de entrada e gameplay precisam estar DEPOIS do bloco de impressão.
+# Os reparos de entrada e gameplay precisam estar depois do bloco de impressão.
 print_end = html.find('printWindow.document.close();', html.find(needle))
 for script_id in ('smyle-v57-restore-game-flow-js', 'smyle-v59-home-entry-repair'):
     pos = html.find(f'id="{script_id}"')
     if pos <= print_end:
-        raise RuntimeError(f'FALHA DE INTEGRIDADE: {script_id} não está no body principal.')
+        raise RuntimeError(f'FALHA DE INTEGRIDADE: {script_id} não está no documento principal.')
 
 path.write_text(html, encoding='utf-8')
-print('V60 OK: HTML íntegro. Scripts recuperados:', ', '.join(recovered_ids) if recovered_ids else 'nenhum')
+print('V60 OK: HTML íntegro. Elementos recuperados:', ', '.join(recovered_ids) if recovered_ids else 'nenhum')
