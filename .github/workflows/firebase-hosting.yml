@@ -46,8 +46,7 @@ jobs:
           python3 scripts/patch-v40-access-profiles.py
           python3 scripts/patch-v41-login-recovery.py
           python3 scripts/patch-v42-core-password-sync.py
-          python3 scripts/patch-v43-local-access-recovery.py
-          python3 scripts/patch-v44-recovery-button.py
+          python3 scripts/patch-v45-auth-record-fix.py
           python3 scripts/patch-v36-script-integrity.py
 
       - name: Publicar no Firebase Hosting
