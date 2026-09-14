@@ -56,6 +56,7 @@ jobs:
           python3 scripts/patch-v36-script-integrity.py
           python3 scripts/patch-v57-restore-game-flow.py
           python3 scripts/patch-v59-home-entry-repair.py
+          python3 scripts/patch-v60-final-integrity.py
 
       - name: Publicar no Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
