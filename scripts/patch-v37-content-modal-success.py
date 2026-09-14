@@ -317,7 +317,12 @@ js = r'''
 '''
 
 if 'smyleShowContentSaved' not in html:
-    html = html.replace('</body>', js + '\n</body>')
+    # IMPORTANTE: usar o último </body> do documento. O primeiro pode pertencer
+    # ao HTML interno do relatório de impressão e quebrar todo o JavaScript.
+    body_pos = html.rfind('</body>')
+    if body_pos < 0:
+        raise RuntimeError('Fechamento </body> principal não encontrado.')
+    html = html[:body_pos] + js + '\n' + html[body_pos:]
 
 path.write_text(html, encoding='utf-8')
 print('Patch V37 aplicado: formulários compactos, botões visíveis e confirmação de salvamento.')
