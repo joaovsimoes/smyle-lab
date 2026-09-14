@@ -47,6 +47,7 @@ jobs:
           python3 scripts/patch-v48-primary-admin-status.py
           python3 scripts/patch-v49-local-core-repair.py
           python3 scripts/patch-v50-one-screen-games.py
+          python3 scripts/patch-v51-setup-compact.py
           python3 scripts/patch-v36-script-integrity.py
 
       - name: Publicar no Firebase Hosting
