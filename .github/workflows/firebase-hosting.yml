@@ -52,6 +52,7 @@ jobs:
           python3 scripts/patch-v53-compact-game-picker.py
           python3 scripts/patch-v54-uniform-setup.py
           python3 scripts/patch-v55-next-button.py
+          python3 scripts/patch-v56-compact-game-flow.py
           python3 scripts/patch-v36-script-integrity.py
 
       - name: Publicar no Firebase Hosting
