@@ -29,5 +29,36 @@ text = text.replace(
     1,
 )
 
+# ==== V31: código do jogador em sequência ====
+old = '''function generateSmylePlayerCodeV19(){
+  const used = new Set();
+  try{
+    (getGames()||[]).forEach(g=>{ if(/^SMY\\.\\d{4}$/.test(g.player||'')) used.add(g.player); });
+  }catch(e){}
+  let code='SMY.0001';
+  for(let i=0;i<12000;i++){
+    const n=Math.floor(Math.random()*10000);
+    const candidate='SMY.'+String(n).padStart(4,'0');
+    if(!used.has(candidate)){ code=candidate; break; }
+  }
+  sessionStorage.setItem(SMYLE_PLAYER_CODE_SESSION_KEY_V19,code);
+  return code;
+}'''
+
+new = '''const SMYLE_PLAYER_CODE_COUNTER_KEY_V31 = 'smyle_player_code_counter_v31';
+function generateSmylePlayerCodeV19(){
+  let current = Number(localStorage.getItem(SMYLE_PLAYER_CODE_COUNTER_KEY_V31) || '0');
+  if(!Number.isFinite(current) || current < 0) current = 0;
+  const next = current >= 9999 ? 1 : current + 1;
+  localStorage.setItem(SMYLE_PLAYER_CODE_COUNTER_KEY_V31, String(next));
+  const code = 'SMY.' + String(next).padStart(4,'0');
+  sessionStorage.setItem(SMYLE_PLAYER_CODE_SESSION_KEY_V19, code);
+  return code;
+}'''
+
+if old not in text:
+    raise RuntimeError('Função de geração do código SMY não encontrada.')
+text = text.replace(old, new, 1)
+
 path.write_text(text, encoding="utf-8")
-print("Correção v30 de inicialização aplicada com sucesso.")
+print("Correções v30/v31 aplicadas com sucesso.")
