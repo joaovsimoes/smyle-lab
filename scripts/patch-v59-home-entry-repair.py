@@ -157,10 +157,28 @@ script = r'''
 '''
 
 if 'id="smyle-v59-home-entry-style"' not in html:
-    html = html.replace('</head>', style + '\n</head>', 1)
+    head_pos = html.rfind('</head>')
+    if head_pos < 0:
+        raise RuntimeError('Fechamento </head> principal não encontrado.')
+    html = html[:head_pos] + style + '\n' + html[head_pos:]
 
 if 'id="smyle-v59-home-entry-repair"' not in html:
-    html = html.replace('</body>', script + '\n</body>', 1)
+    # IMPORTANTE: o documento contém um HTML interno de impressão com </body>.
+    # Usar o primeiro fechamento insere o patch dentro do template do relatório
+    # e faz o navegador encerrar o JavaScript principal no meio.
+    body_pos = html.rfind('</body>')
+    if body_pos < 0:
+        raise RuntimeError('Fechamento </body> principal não encontrado.')
+    html = html[:body_pos] + script + '\n' + html[body_pos:]
+
+# Proteção contra regressão: o V59 deve estar depois do último fechamento do
+# template de impressão e imediatamente antes do body principal.
+script_pos = html.find('id="smyle-v59-home-entry-repair"')
+last_print_close = html.rfind('printWindow.document.close();')
+if script_pos < 0:
+    raise RuntimeError('V59 não foi inserido no HTML final.')
+if last_print_close >= 0 and script_pos < last_print_close:
+    raise RuntimeError('V59 caiu dentro do HTML de impressão. Deploy interrompido.')
 
 path.write_text(html, encoding='utf-8')
-print('Patch V59 aplicado: botões Jogar e Administrador isolados e restaurados.')
+print('Patch V59 aplicado com segurança no body principal.')
