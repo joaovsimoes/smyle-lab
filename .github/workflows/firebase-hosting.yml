@@ -36,6 +36,7 @@ jobs:
         run: |
           python3 scripts/patch-admin-access.py
           python3 scripts/fix-v30-boot.py
+          python3 scripts/patch-v32-premium.py
 
       - name: Publicar no Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
