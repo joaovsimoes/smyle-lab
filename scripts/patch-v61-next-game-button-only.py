@@ -8,194 +8,320 @@ html = path.read_text(encoding='utf-8')
 
 style_marker = '/* ==== Smyle Lab V61: feedback do jogo em modal ==== */'
 css = r'''
+<style id="smyle-v61-round-result-style">
 /* ==== Smyle Lab V61: feedback do jogo em modal ==== */
 
 /* O avanço agora acontece exclusivamente pelo modal de resultado. */
-#gameScreen #nextQuestionBtn{
-  display:none !important;
-}
-
+#gameScreen #nextQuestionBtn,
 #gameScreen #feedbackBox{
   display:none !important;
 }
 
 #smyleRoundResultModal{
-  position:fixed;
-  inset:0;
-  z-index:10050;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:24px;
-  background:rgba(8,26,46,.58);
-  backdrop-filter:blur(7px);
-  -webkit-backdrop-filter:blur(7px);
+  position:fixed !important;
+  inset:0 !important;
+  z-index:10050 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:24px !important;
+  background:rgba(8,26,46,.56) !important;
+  backdrop-filter:blur(5px) !important;
+  -webkit-backdrop-filter:blur(5px) !important;
+  box-sizing:border-box !important;
 }
 
 #smyleRoundResultModal.hidden{
   display:none !important;
 }
 
+#smyleRoundResultModal,
+#smyleRoundResultModal *{
+  box-sizing:border-box !important;
+}
+
 #smyleRoundResultModal .smyle-round-result-card{
-  width:min(560px, calc(100vw - 32px));
-  max-height:calc(100dvh - 40px);
-  overflow:auto;
-  background:#fff;
-  border:1px solid rgba(12,35,64,.10);
-  border-radius:24px;
-  padding:26px;
-  box-shadow:0 28px 80px rgba(8,26,46,.28);
-  animation:smyleRoundResultIn .22s ease-out;
+  width:min(760px, calc(100vw - 40px)) !important;
+  max-height:calc(100dvh - 48px) !important;
+  overflow:hidden !important;
+  background:#fff !important;
+  border:1px solid rgba(12,35,64,.10) !important;
+  border-radius:24px !important;
+  box-shadow:0 30px 85px rgba(8,26,46,.30) !important;
+  animation:smyleRoundResultIn .20s ease-out !important;
+  color:#0C2340 !important;
 }
 
 @keyframes smyleRoundResultIn{
-  from{opacity:0;transform:translateY(12px) scale(.985)}
+  from{opacity:0;transform:translateY(10px) scale(.985)}
   to{opacity:1;transform:translateY(0) scale(1)}
 }
 
-#smyleRoundResultModal .smyle-round-result-icon{
-  width:58px;
-  height:58px;
-  border-radius:18px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin-bottom:16px;
-  font-size:27px;
-  font-weight:900;
-  background:#E9FBF8;
-  color:#0C2340;
-  border:1px solid #BDEFE7;
+#smyleRoundResultModal .smyle-round-result-header{
+  display:flex !important;
+  align-items:flex-start !important;
+  justify-content:space-between !important;
+  gap:24px !important;
+  padding:28px 30px 24px !important;
+  border-bottom:1px solid #E4EAF0 !important;
+  background:#fff !important;
 }
 
-#smyleRoundResultModal[data-result="wrong"] .smyle-round-result-icon{
-  background:#F1F5F9;
-  border-color:#D8E2EC;
-}
-
-#smyleRoundResultModal[data-result="timeout"] .smyle-round-result-icon{
-  background:#F5F7FA;
-  border-color:#D8E2EC;
+#smyleRoundResultModal .smyle-round-result-heading{
+  min-width:0 !important;
 }
 
 #smyleRoundResultModal .smyle-round-result-kicker{
-  margin:0 0 5px;
-  color:#20A99A;
-  font-size:12px;
-  line-height:1.2;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
+  margin:0 0 6px !important;
+  color:#20A99A !important;
+  font-size:12px !important;
+  line-height:1.2 !important;
+  font-weight:900 !important;
+  letter-spacing:.09em !important;
+  text-transform:uppercase !important;
 }
 
 #smyleRoundResultModal .smyle-round-result-title{
-  margin:0;
-  color:#081A2E;
-  font-size:clamp(23px, 3vw, 30px);
-  line-height:1.08;
-  font-weight:900;
+  margin:0 !important;
+  color:#081A2E !important;
+  font-size:clamp(23px,2.6vw,30px) !important;
+  line-height:1.1 !important;
+  font-weight:900 !important;
+}
+
+#smyleRoundResultModal .smyle-round-result-close{
+  flex:0 0 auto !important;
+  width:48px !important;
+  height:48px !important;
+  border:0 !important;
+  border-radius:15px !important;
+  background:#F2F4F6 !important;
+  color:#081A2E !important;
+  font-size:27px !important;
+  font-weight:400 !important;
+  line-height:1 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  cursor:pointer !important;
+  padding:0 !important;
+}
+
+#smyleRoundResultModal .smyle-round-result-content{
+  padding:26px 30px !important;
+  background:#fff !important;
+  overflow:auto !important;
+  max-height:calc(100dvh - 250px) !important;
+}
+
+#smyleRoundResultModal .smyle-round-result-summary{
+  display:grid !important;
+  grid-template-columns:64px 1fr !important;
+  gap:18px !important;
+  align-items:start !important;
+  padding:20px !important;
+  border-radius:20px !important;
+  border:1px solid #CFE0F4 !important;
+  background:#F6FAFF !important;
+}
+
+#smyleRoundResultModal .smyle-round-result-icon{
+  width:58px !important;
+  height:58px !important;
+  border-radius:18px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  margin:0 !important;
+  font-size:28px !important;
+  font-weight:900 !important;
+  background:#0C2340 !important;
+  color:#fff !important;
+  border:0 !important;
+}
+
+#smyleRoundResultModal[data-result="correct"] .smyle-round-result-icon{
+  background:#0C2340 !important;
+}
+
+#smyleRoundResultModal[data-result="wrong"] .smyle-round-result-icon,
+#smyleRoundResultModal[data-result="timeout"] .smyle-round-result-icon{
+  background:#324A62 !important;
 }
 
 #smyleRoundResultModal .smyle-round-result-message{
-  margin:8px 0 0;
-  color:#536B82;
-  font-size:14px;
-  line-height:1.48;
-}
-
-#smyleRoundResultModal .smyle-round-result-points{
-  display:inline-flex;
-  align-items:center;
-  width:max-content;
-  margin-top:16px;
-  padding:7px 11px;
-  border-radius:999px;
-  background:#E9FBF8;
-  border:1px solid #BDEFE7;
-  color:#0C2340;
-  font-size:12px;
-  font-weight:900;
+  margin:1px 0 7px !important;
+  color:#0C2340 !important;
+  font-size:17px !important;
+  line-height:1.35 !important;
+  font-weight:900 !important;
 }
 
 #smyleRoundResultModal .smyle-round-result-explanation{
-  margin-top:18px;
-  padding:14px 16px;
-  border-radius:16px;
-  background:#F5F8FB;
-  border:1px solid #E4EBF2;
-  color:#435B72;
-  font-size:13px;
-  line-height:1.5;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  color:#5A6E83 !important;
+  font-size:14px !important;
+  line-height:1.55 !important;
 }
 
 #smyleRoundResultModal .smyle-round-result-extra{
-  margin-top:9px;
-  color:#0C2340;
-  font-size:12px;
-  line-height:1.45;
-  font-weight:800;
+  margin:7px 0 0 !important;
+  color:#0C2340 !important;
+  font-size:13px !important;
+  line-height:1.5 !important;
+  font-weight:800 !important;
+}
+
+#smyleRoundResultModal .smyle-round-result-scorebox{
+  margin-top:18px !important;
+  padding:16px 20px !important;
+  border:1px dashed #C9D6E4 !important;
+  border-radius:18px !important;
+  background:#fff !important;
+  text-align:center !important;
+}
+
+#smyleRoundResultModal .smyle-round-result-scorelabel{
+  display:block !important;
+  margin-bottom:5px !important;
+  color:#92A0B1 !important;
+  font-size:11px !important;
+  font-weight:800 !important;
+  letter-spacing:.12em !important;
+  text-transform:uppercase !important;
+}
+
+#smyleRoundResultModal .smyle-round-result-points{
+  display:block !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#0C2340 !important;
+  font-size:24px !important;
+  line-height:1.15 !important;
+  font-weight:900 !important;
+}
+
+#smyleRoundResultModal .smyle-round-result-footer{
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  padding:18px 30px !important;
+  border-top:1px solid #E4EAF0 !important;
+  background:#fff !important;
 }
 
 #smyleRoundResultModal .smyle-round-result-next{
-  width:100%;
-  min-height:50px;
-  margin-top:20px;
-  border:0;
-  border-radius:15px;
-  padding:0 18px;
-  background:#0C2340;
-  color:#fff;
-  font:inherit;
-  font-size:14px;
-  font-weight:900;
-  cursor:pointer;
-  transition:transform .16s ease, box-shadow .16s ease;
-  box-shadow:0 10px 24px rgba(12,35,64,.16);
+  min-width:220px !important;
+  min-height:52px !important;
+  margin:0 !important;
+  border:0 !important;
+  border-radius:15px !important;
+  padding:0 24px !important;
+  background:#0C2340 !important;
+  color:#fff !important;
+  font:inherit !important;
+  font-size:14px !important;
+  font-weight:900 !important;
+  cursor:pointer !important;
+  box-shadow:none !important;
 }
 
 #smyleRoundResultModal .smyle-round-result-next:hover{
-  transform:translateY(-1px);
-  box-shadow:0 13px 28px rgba(12,35,64,.21);
+  filter:brightness(1.07) !important;
 }
 
+#smyleRoundResultModal .smyle-round-result-close:focus-visible,
 #smyleRoundResultModal .smyle-round-result-next:focus-visible{
-  outline:3px solid rgba(32,169,154,.28);
-  outline-offset:3px;
+  outline:3px solid rgba(32,169,154,.28) !important;
+  outline-offset:3px !important;
 }
 
 @media (max-width:700px){
-  #smyleRoundResultModal{padding:16px;}
-  #smyleRoundResultModal .smyle-round-result-card{
-    width:100%;
-    padding:21px;
-    border-radius:20px;
+  #smyleRoundResultModal{
+    padding:14px !important;
   }
+
+  #smyleRoundResultModal .smyle-round-result-card{
+    width:100% !important;
+    border-radius:20px !important;
+  }
+
+  #smyleRoundResultModal .smyle-round-result-header{
+    padding:22px 20px 18px !important;
+  }
+
+  #smyleRoundResultModal .smyle-round-result-close{
+    width:42px !important;
+    height:42px !important;
+    border-radius:13px !important;
+  }
+
+  #smyleRoundResultModal .smyle-round-result-content{
+    padding:20px !important;
+  }
+
+  #smyleRoundResultModal .smyle-round-result-summary{
+    grid-template-columns:52px 1fr !important;
+    gap:14px !important;
+    padding:16px !important;
+  }
+
   #smyleRoundResultModal .smyle-round-result-icon{
-    width:52px;
-    height:52px;
-    border-radius:16px;
+    width:50px !important;
+    height:50px !important;
+    border-radius:15px !important;
+    font-size:24px !important;
+  }
+
+  #smyleRoundResultModal .smyle-round-result-footer{
+    padding:16px 20px 20px !important;
+  }
+
+  #smyleRoundResultModal .smyle-round-result-next{
+    width:100% !important;
+    min-width:0 !important;
   }
 }
+</style>
 '''
-
-if style_marker not in html:
-    head_close = html.rfind('</head>')
-    if head_close < 0:
-        raise RuntimeError('Fechamento </head> principal não encontrado.')
-    html = html[:head_close] + '<style id="smyle-v61-round-result-style">\n' + css + '\n</style>\n' + html[head_close:]
 
 modal_marker = 'id="smyleRoundResultModal"'
 modal = r'''
 <div id="smyleRoundResultModal" class="hidden" data-result="correct" role="dialog" aria-modal="true" aria-labelledby="smyleRoundResultTitle">
   <div class="smyle-round-result-card">
-    <div id="smyleRoundResultIcon" class="smyle-round-result-icon">✓</div>
-    <p id="smyleRoundResultKicker" class="smyle-round-result-kicker">Resultado da etapa</p>
-    <h3 id="smyleRoundResultTitle" class="smyle-round-result-title">Resposta certa!</h3>
-    <p id="smyleRoundResultMessage" class="smyle-round-result-message"></p>
-    <div id="smyleRoundResultPoints" class="smyle-round-result-points">+0 pts</div>
-    <div id="smyleRoundResultExplanation" class="smyle-round-result-explanation"></div>
-    <div id="smyleRoundResultExtra" class="smyle-round-result-extra"></div>
-    <button id="smyleRoundResultNext" class="smyle-round-result-next" type="button" onclick="advanceSmyleRoundFromModal()">Próximo desafio →</button>
+    <div class="smyle-round-result-header">
+      <div class="smyle-round-result-heading">
+        <p id="smyleRoundResultKicker" class="smyle-round-result-kicker">RESULTADO DA ETAPA</p>
+        <h3 id="smyleRoundResultTitle" class="smyle-round-result-title">Resposta certa!</h3>
+      </div>
+      <button class="smyle-round-result-close" type="button" aria-label="Avançar" title="Avançar" onclick="advanceSmyleRoundFromModal()">×</button>
+    </div>
+
+    <div class="smyle-round-result-content">
+      <div class="smyle-round-result-summary">
+        <div id="smyleRoundResultIcon" class="smyle-round-result-icon">✓</div>
+        <div>
+          <p id="smyleRoundResultMessage" class="smyle-round-result-message"></p>
+          <p id="smyleRoundResultExplanation" class="smyle-round-result-explanation"></p>
+          <p id="smyleRoundResultExtra" class="smyle-round-result-extra"></p>
+        </div>
+      </div>
+
+      <div id="smyleRoundResultScorebox" class="smyle-round-result-scorebox">
+        <span class="smyle-round-result-scorelabel">PONTUAÇÃO DA ETAPA</span>
+        <strong id="smyleRoundResultPoints" class="smyle-round-result-points">+0 pts</strong>
+      </div>
+    </div>
+
+    <div class="smyle-round-result-footer">
+      <button id="smyleRoundResultNext" class="smyle-round-result-next" type="button" onclick="advanceSmyleRoundFromModal()">Próximo desafio →</button>
+    </div>
   </div>
 </div>
 '''
@@ -204,6 +330,8 @@ script_marker = 'id="smyle-v61-round-result-js"'
 script = r'''
 <script id="smyle-v61-round-result-js">
 (function(){
+  var previousBodyOverflow='';
+
   function setText(id,value){
     var el=document.getElementById(id);
     if(el) el.textContent=value || '';
@@ -217,20 +345,21 @@ script = r'''
     modal.setAttribute('data-result',result);
 
     setText('smyleRoundResultIcon',timedOut ? '⏱' : (correct ? '✓' : '×'));
-    setText('smyleRoundResultKicker',timedOut ? 'Tempo da etapa' : 'Resultado da etapa');
-    setText('smyleRoundResultTitle',timedOut ? 'Tempo esgotado' : (correct ? 'Resposta certa! ✨' : 'Resposta incorreta'));
-    setText('smyleRoundResultMessage',title || (correct ? 'Mandou bem nesta etapa.' : 'Confira a explicação antes de seguir.'));
+    setText('smyleRoundResultKicker',timedOut ? 'TEMPO DA ETAPA' : 'RESULTADO DA ETAPA');
+    setText('smyleRoundResultTitle',timedOut ? 'Tempo esgotado' : (correct ? 'Resposta correta' : 'Resposta incorreta'));
+    setText('smyleRoundResultMessage',title || (correct ? 'Você acertou esta etapa.' : 'Confira a explicação antes de seguir.'));
     setText('smyleRoundResultExplanation',explanation || '');
     setText('smyleRoundResultExtra',extra || '');
 
+    var scorebox=document.getElementById('smyleRoundResultScorebox');
     var points=document.getElementById('smyleRoundResultPoints');
-    if(points){
+    if(scorebox && points){
       if(correct && Number(earned)>0){
         points.textContent='+'+Number(earned)+' pts';
-        points.style.display='inline-flex';
       }else{
-        points.style.display='none';
+        points.textContent='0 pts';
       }
+      scorebox.style.display='block';
     }
 
     var next=document.getElementById('smyleRoundResultNext');
@@ -239,6 +368,7 @@ script = r'''
       next.textContent=isLast ? 'Ver resultado 🏆' : 'Próximo desafio →';
     }
 
+    previousBodyOverflow=document.body.style.overflow || '';
     modal.classList.remove('hidden');
     document.body.style.overflow='hidden';
     setTimeout(function(){ try{ next && next.focus(); }catch(e){} },40);
@@ -247,7 +377,7 @@ script = r'''
   window.advanceSmyleRoundFromModal=function(){
     var modal=document.getElementById('smyleRoundResultModal');
     if(modal) modal.classList.add('hidden');
-    document.body.style.overflow='';
+    document.body.style.overflow=previousBodyOverflow;
     if(typeof window.nextQuestion==='function') window.nextQuestion();
   };
 
@@ -279,17 +409,22 @@ script = r'''
 </script>
 '''
 
-# Insere modal e script apenas no BODY PRINCIPAL, usando o último </body>.
-if modal_marker not in html or script_marker not in html:
-    body_close = html.rfind('</body>')
-    if body_close < 0:
-        raise RuntimeError('Fechamento </body> principal não encontrado.')
-    additions = ''
-    if modal_marker not in html:
-        additions += modal + '\n'
-    if script_marker not in html:
-        additions += script + '\n'
+# Tudo do V61 entra junto no BODY PRINCIPAL. Não usamos </head>, pois existe
+# outro <head> dentro do template de impressão de relatórios.
+body_close = html.rfind('</body>')
+if body_close < 0:
+    raise RuntimeError('Fechamento </body> principal não encontrado.')
+
+additions = ''
+if style_marker not in html:
+    additions += css + '\n'
+if modal_marker not in html:
+    additions += modal + '\n'
+if script_marker not in html:
+    additions += script + '\n'
+
+if additions:
     html = html[:body_close] + additions + html[body_close:]
 
 path.write_text(html, encoding='utf-8')
-print('V61 aplicada: feedback de cada etapa abre em modal com botão para avançar.')
+print('V61 aplicada: modal central de feedback com layout Smyle e botão de avanço.')
