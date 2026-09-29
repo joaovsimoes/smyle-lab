@@ -61,17 +61,33 @@ jobs:
         run: |
           echo "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/firebase-service-account.json"
           export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/firebase-service-account.json"
-          npx --yes firebase-tools@14.12.1 deploy --only firestore:rules --project smyle-lab --non-interactive || echo "::warning::Não foi possível publicar as regras do Firestore. O Hosting continuará sendo publicado."
+          cat > "$RUNNER_TEMP/firebase-firestore.json" <<'JSON'
+          {
+            "firestore": {
+              "rules": "firestore.rules"
+            }
+          }
+          JSON
+          npx --yes firebase-tools@14.12.1 deploy --config "$RUNNER_TEMP/firebase-firestore.json" --only firestore:rules --project smyle-lab --non-interactive
 
-      - name: Verificar documento compartilhado
+      - name: Validar acesso ao Firestore
         shell: bash
         run: |
-          echo "=== FIRESTORE SHARED CONTENT ==="
+          echo "=== FIRESTORE ACCESS CHECK ==="
           code=$(curl -sS -o "$RUNNER_TEMP/smyle-firestore.json" -w "%{http_code}" "https://firestore.googleapis.com/v1/projects/smyle-lab/databases/(default)/documents/smyleShared/gameContent")
           echo "HTTP_STATUS=$code"
-          head -c 1500 "$RUNNER_TEMP/smyle-firestore.json" || true
+          head -c 1200 "$RUNNER_TEMP/smyle-firestore.json" || true
           echo
-          echo "=== END FIRESTORE SHARED CONTENT ==="
+          if [ "$code" = "403" ]; then
+            echo "ERRO: Firestore continua bloqueando o conteúdo compartilhado."
+            exit 1
+          fi
+          if [ "$code" != "200" ] && [ "$code" != "404" ]; then
+            echo "ERRO: resposta inesperada do Firestore: $code"
+            exit 1
+          fi
+          echo "Firestore acessível para o Smyle Lab."
+          echo "=== END FIRESTORE ACCESS CHECK ==="
 
       - name: Publicar no Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
