@@ -73,6 +73,35 @@ jobs:
           JSON
           npx --yes firebase-tools@14.12.1 deploy --config "$RUNNER_TEMP/firebase-firestore.json" --only firestore:rules --project smyle-lab --non-interactive || echo "::warning::Conta de deploy sem permissão para publicar regras; testando autenticação do app."
 
+      - name: Auditar conteúdo compartilhado
+        shell: bash
+        run: |
+          set +e
+          code=$(curl -sS -o "$RUNNER_TEMP/smyle-shared.json" -w "%{http_code}" "https://firestore.googleapis.com/v1/projects/smyle-lab/databases/(default)/documents/smyleShared/gameContent")
+          echo "SHARED_DOC_STATUS=$code"
+          python3 - <<'PY'
+          import json, os
+          p=os.environ['RUNNER_TEMP']+'/smyle-shared.json'
+          try:
+              doc=json.load(open(p,encoding='utf-8'))
+              raw=doc.get('fields',{}).get('contentJson',{}).get('stringValue')
+              if not raw:
+                  print('SHARED_DOC_PRESENT=no')
+              else:
+                  data=json.loads(raw)
+                  print('SHARED_DOC_PRESENT=yes')
+                  qs=json.loads(data.get('dojo_questions_v1','[]'))
+                  native=json.loads(data.get('smyle_lab_native_content_v17','{}'))
+                  print('CLOUD_FATO_FAKE_COUNT='+str(len(qs) if isinstance(qs,list) else -1))
+                  if isinstance(native,dict):
+                      for k,v in native.items():
+                          print('CLOUD_'+str(k).upper().replace('-','_')+'_COUNT='+str(len(v) if isinstance(v,list) else -1))
+                  print('CLOUD_VERSION='+str(doc.get('fields',{}).get('version',{}).get('integerValue','')))
+                  print('CLOUD_UPDATED_AT='+str(doc.get('fields',{}).get('updatedAt',{}).get('timestampValue','')))
+          except Exception as e:
+              print('SHARED_DOC_PARSE_ERROR='+repr(e))
+          PY
+
       - name: Publicar no Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
