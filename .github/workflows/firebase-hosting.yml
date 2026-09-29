@@ -50,6 +50,7 @@ jobs:
           python3 scripts/patch-v61-next-game-button-only.py
           python3 scripts/patch-v62-dynamic-questions-and-game-times.py
           python3 scripts/patch-v63-official-favicon.py
+          python3 scripts/patch-v64-official-title.py
           python3 scripts/patch-v64-site-title.py
 
       - name: Publicar no Firebase Hosting
