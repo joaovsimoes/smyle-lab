@@ -1,0 +1,20 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /smyleShared/gameContent {
+      allow read: if true;
+      allow create, update: if
+        request.resource.data.keys().hasOnly(['contentJson', 'version', 'updatedAt'])
+        && request.resource.data.contentJson is string
+        && request.resource.data.contentJson.size() < 900000
+        && request.resource.data.version == 65
+        && request.resource.data.updatedAt is timestamp;
+      allow delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
