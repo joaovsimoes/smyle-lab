@@ -54,6 +54,17 @@ jobs:
           python3 scripts/patch-v64-site-title.py
           python3 scripts/patch-v65-cloud-content-sync.py
 
+      - name: Identificar conta de deploy
+        shell: bash
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SMYLE_LAB }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          data=json.loads(os.environ['FIREBASE_SERVICE_ACCOUNT_JSON'])
+          print("DEPLOY_SERVICE_ACCOUNT="+data.get("client_email",""))
+          PY
+
       - name: Publicar regras do Firestore
         shell: bash
         env:
