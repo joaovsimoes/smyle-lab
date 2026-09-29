@@ -31,24 +31,20 @@ jobs:
             exit 1
           fi
 
-      - name: Diagnosticar pontos reais de armazenamento
+      - name: Diagnosticar salvamento e leitura das perguntas
         shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
           s=Path('public/index.html').read_text(encoding='utf-8',errors='ignore')
-          print('=== SMYLE STORAGE CONTEXT ===')
-          for token in ['dojo_questions_v1','smyle_lab_native_content_v17','smyle_lab_game_catalog_v1']:
-            start=0
-            count=0
-            while True:
-              i=s.find(token,start)
-              if i<0 or count>=12: break
-              print('---',token,'@',i,'---')
-              print(s[max(0,i-1200):min(len(s),i+2200)])
-              start=i+len(token)
-              count+=1
-          print('=== END STORAGE CONTEXT ===')
+          print('=== QUESTION FLOW CONTEXT ===')
+          for token in ['saveQuestion','saveNative','setNative','getNative','getGameItems','SMYLE_NATIVE_CONTENT_KEY','setQuestions','getQuestions']:
+            matches=list(re.finditer(re.escape(token),s,re.I))
+            for n,m in enumerate(matches[:20]):
+              print('---',token,n,'@',m.start(),'---')
+              print(s[max(0,m.start()-900):min(len(s),m.start()+2600)])
+          print('=== END QUESTION FLOW CONTEXT ===')
           PY
 
       - name: Aplicar base estável e correção isolada
