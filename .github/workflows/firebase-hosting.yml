@@ -31,6 +31,26 @@ jobs:
             exit 1
           fi
 
+      - name: Diagnosticar armazenamento do Smyle Lab
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('public/index.html')
+          s=p.read_text(encoding='utf-8',errors='ignore')
+          pats=[r'localStorage[^;\n]*',r'function\s+getGameItems[^\n]*',r'function\s+setGameItems[^\n]*',r'function\s+getSettings[^\n]*',r'function\s+setSettings[^\n]*',r'SMYLE_[A-Z0-9_]+']
+          seen=[]
+          for pat in pats:
+            for m in re.finditer(pat,s,re.I):
+              t=m.group(0)[:500]
+              if t not in seen:
+                seen.append(t)
+          print('=== SMYLE STORAGE DIAGNOSTIC ===')
+          for x in seen[:250]: print(x)
+          print('=== END DIAGNOSTIC ===')
+          PY
+
       - name: Aplicar base estável e correção isolada
         shell: bash
         run: |
