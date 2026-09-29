@@ -47,6 +47,8 @@ jobs:
               if t not in seen:
                 seen.append(t)
           print('=== SMYLE STORAGE DIAGNOSTIC ===')
+          m=re.search(r'(?:const|let|var)\s+KEYS\s*=\s*\{[^}]+\}',s,re.S)
+          if m: print('KEYS_OBJECT:',m.group(0))
           for x in seen[:250]: print(x)
           print('=== END DIAGNOSTIC ===')
           PY
