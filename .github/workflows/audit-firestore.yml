@@ -1,0 +1,43 @@
+name: Auditar Firestore Smyle Lab
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auditar base compartilhada
+        shell: bash
+        run: |
+          set +e
+          code=$(curl -sS -o "$RUNNER_TEMP/smyle-shared.json" -w "%{http_code}" "https://firestore.googleapis.com/v1/projects/smyle-lab/databases/(default)/documents/smyleShared/gameContent")
+          echo "SHARED_DOC_STATUS=$code"
+          python3 - <<'PY'
+          import json, os
+          p=os.environ['RUNNER_TEMP']+'/smyle-shared.json'
+          try:
+              doc=json.load(open(p,encoding='utf-8'))
+              raw=doc.get('fields',{}).get('contentJson',{}).get('stringValue')
+              if not raw:
+                  print('SHARED_DOC_PRESENT=no')
+              else:
+                  data=json.loads(raw)
+                  print('SHARED_DOC_PRESENT=yes')
+                  qs=json.loads(data.get('dojo_questions_v1','[]'))
+                  native=json.loads(data.get('smyle_lab_native_content_v17','{}'))
+                  print('CLOUD_FATO_FAKE_COUNT='+str(len(qs) if isinstance(qs,list) else -1))
+                  if isinstance(native,dict):
+                      for k,v in native.items():
+                          print('CLOUD_'+str(k).upper().replace('-','_')+'_COUNT='+str(len(v) if isinstance(v,list) else -1))
+                  print('CLOUD_VERSION='+str(doc.get('fields',{}).get('version',{}).get('integerValue','')))
+                  print('CLOUD_UPDATED_AT='+str(doc.get('fields',{}).get('updatedAt',{}).get('timestampValue','')))
+          except Exception as e:
+              print('SHARED_DOC_PARSE_ERROR='+repr(e))
+          PY
