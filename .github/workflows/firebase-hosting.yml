@@ -53,6 +53,7 @@ jobs:
           python3 scripts/patch-v64-official-title.py
           python3 scripts/patch-v64-site-title.py
           python3 scripts/patch-v65-cloud-content-sync.py
+          python3 scripts/patch-v66-authoritative-cloud-content.py
 
       - name: Publicar regras do Firestore
         shell: bash
