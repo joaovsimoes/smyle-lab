@@ -31,6 +31,22 @@ jobs:
             exit 1
           fi
 
+      - name: Diagnosticar funções de conteúdo
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('public/index.html').read_text(encoding='utf-8',errors='ignore')
+          names=['setQuestions','getQuestions','saveQuestion','saveGameCatalog','saveNativeContent','getGameItems','saveQuestionV17','saveContent']
+          print('=== SMYLE FUNCTION DIAGNOSTIC ===')
+          for name in names:
+            for m in re.finditer(r'function\\s+'+re.escape(name)+r'\\s*\\([^)]*\\)\\s*\\{',s):
+              print('---',name,'---')
+              print(s[m.start():m.start()+2200])
+          print('=== END FUNCTION DIAGNOSTIC ===')
+          PY
+
       - name: Aplicar base estável e correção isolada
         shell: bash
         run: |
