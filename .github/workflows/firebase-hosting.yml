@@ -31,22 +31,6 @@ jobs:
             exit 1
           fi
 
-      - name: Diagnosticar salvamento e leitura das perguntas
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          s=Path('public/index.html').read_text(encoding='utf-8',errors='ignore')
-          print('=== QUESTION FLOW CONTEXT ===')
-          for token in ['saveQuestion','saveNative','setNative','getNative','getGameItems','SMYLE_NATIVE_CONTENT_KEY','setQuestions','getQuestions']:
-            matches=list(re.finditer(re.escape(token),s,re.I))
-            for n,m in enumerate(matches[:20]):
-              print('---',token,n,'@',m.start(),'---')
-              print(s[max(0,m.start()-900):min(len(s),m.start()+2600)])
-          print('=== END QUESTION FLOW CONTEXT ===')
-          PY
-
       - name: Aplicar base estável e correção isolada
         shell: bash
         run: |
@@ -78,6 +62,16 @@ jobs:
           echo "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/firebase-service-account.json"
           export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/firebase-service-account.json"
           npx --yes firebase-tools@14.12.1 deploy --only firestore:rules --project smyle-lab --non-interactive || echo "::warning::Não foi possível publicar as regras do Firestore. O Hosting continuará sendo publicado."
+
+      - name: Verificar documento compartilhado
+        shell: bash
+        run: |
+          echo "=== FIRESTORE SHARED CONTENT ==="
+          code=$(curl -sS -o "$RUNNER_TEMP/smyle-firestore.json" -w "%{http_code}" "https://firestore.googleapis.com/v1/projects/smyle-lab/databases/(default)/documents/smyleShared/gameContent")
+          echo "HTTP_STATUS=$code"
+          head -c 1500 "$RUNNER_TEMP/smyle-firestore.json" || true
+          echo
+          echo "=== END FIRESTORE SHARED CONTENT ==="
 
       - name: Publicar no Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
